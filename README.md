@@ -1,4 +1,4 @@
-# Arguz Agent Helm Chart
+# arguz-agent Helm Chart
 
 The **Arguz Agent** is responsible for collecting and structuring runtime data from your cluster, enabling deep visibility into service behavior and interactions. It runs inside your environment and automatically gathers insights about how services communicate, helping you understand dependencies, detect issues, and analyze real system behavior without requiring manual instrumentation.
 
@@ -6,7 +6,22 @@ The **Arguz Agent** is responsible for collecting and structuring runtime data f
 
 ## Installation
 
-Deploy the Arguz Agent using Helm:
+### Install from Helm repo (GitHub Pages)
+
+Chart version: 0.1.0
+
+```bash
+helm repo add arguz-agent https://Arguz-Labs.github.io/Arguz-Agent-Chart
+helm repo update
+helm upgrade --install arguz-agent arguz-agent/arguz-agent \
+  --version 0.1.0 \
+  -n arguz-agent \
+  --create-namespace
+```
+
+### Install from local chart
+
+Deploy the arguz-agent using Helm:
 
 ```bash
 helm upgrade --install arguz-agent . \
