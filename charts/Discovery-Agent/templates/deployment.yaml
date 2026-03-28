@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+{{- $autoscaling := .Values.autoscaling | default dict }}
+{{- $image := .Values.image | default dict }}
+{{- $images := .Values.images | default dict }}
+{{- $discoveryImage := $images.discoveryAgent | default dict }}
+{{- $imageRepository := default (default "nginx" $image.repository) $discoveryImage.repository }}
+{{- $imageTag := default (default .Chart.AppVersion $image.tag) $discoveryImage.tag }}
+{{- $imagePullPolicy := default (default "IfNotPresent" $image.pullPolicy) $discoveryImage.pullPolicy }}
+{{- $env := .Values.env | default dict }}
+{{- $config := .Values.config | default dict }}
+{{- $global := .Values.global | default dict }}
+{{- $credentialsSecretName := default "arguz-credentials" $global.credentialsSecretName }}
+{{- $configMapName := default (printf "%s-config" (include "Discovery-Agent.fullname" .)) $config.configMapName }}
+{{- $configFileName := default "config.yaml" $config.fileName }}
+{{- $configFilePath := default "/config.yaml" $config.filePath }}
+metadata:
+  name: {{ include "Discovery-Agent.fullname" . }}
+  labels:
+    {{- include "Discovery-Agent.labels" . | nindent 4 }}
+spec:
+  {{- if not (default false $autoscaling.enabled) }}
+  replicas: {{ default 1 .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "Discovery-Agent.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "Discovery-Agent.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "Discovery-Agent.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ include "Discovery-Agent.name" . }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ $imageRepository }}:{{ $imageTag }}"
+          imagePullPolicy: {{ $imagePullPolicy }}
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: CONFIG_FILE
+              value: {{ $configFilePath | quote }}
+            - name: PROJECT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $credentialsSecretName }}
+                  key: PROJECT_ID
+            - name: CLUSTER_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $credentialsSecretName }}
+                  key: CLUSTER_ID
+            - name: CLUSTER_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $credentialsSecretName }}
+                  key: CLUSTER_TOKEN
+            - name: API_URL
+              value: {{ default "" $env.API_URL | quote }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: agent-config
+              mountPath: {{ $configFilePath | quote }}
+              subPath: {{ $configFileName | quote }}
+              readOnly: true
+          {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      volumes:
+        - name: agent-config
+          configMap:
+            name: {{ $configMapName }}
+      {{- with .Values.volumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

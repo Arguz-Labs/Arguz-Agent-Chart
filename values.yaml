@@ -1,0 +1,88 @@
+
+
+global:
+  credentialsSecretName: "arguz-credentials"
+  clusterCredentials:
+    projectId: "a6ac480e-b539-4bde-965d-0ceb4f100731"
+    clusterId: "99db25fc-9af7-474f-b900-f0a418d91456"
+    clusterToken: "yqIPXLYt6h0bxKzQFDmZiK4ATFU6zRVp"
+
+Discovery-Agent:
+  replicaCount: 2
+  image:
+    repository: ghcr.io/arguz-labs/arguz-discovery-agent
+    pullPolicy: IfNotPresent
+    tag: "20260328001407"
+
+  imagePullSecrets: []
+  nameOverride: ""
+  fullnameOverride: ""
+
+  serviceAccount:
+    create: true
+    automount: true
+    annotations: {}
+    name: ""
+
+  podAnnotations: {}
+  podLabels: {}
+
+  podSecurityContext: {}
+    # fsGroup: 2000
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+  env:
+    API_URL: "https://api-discover.arguz.io"
+
+  config:
+    configMapName: ""
+    mountPath: "/"
+    fileName: "config.yaml"
+    filePath: "/config.yaml"
+    content: |
+      log_level: info
+      ignore_namespaces:
+        - kube-system
+      ignore_resources:
+        - job/*
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+
+  # Additional volumes on the output Deployment definition.
+  volumes: []
+  # - name: foo
+  #   secret:
+  #     secretName: mysecret
+  #     optional: false
+
+  # Additional volumeMounts on the output Deployment definition.
+  volumeMounts: []
+  # - name: foo
+  #   mountPath: "/etc/foo"
+  #   readOnly: true
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
