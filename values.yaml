@@ -3,9 +3,9 @@
 global:
   credentialsSecretName: "arguz-credentials"
   clusterCredentials:
-    projectId: "a6ac480e-b539-4bde-965d-0ceb4f100731"
-    clusterId: "99db25fc-9af7-474f-b900-f0a418d91456"
-    clusterToken: "yqIPXLYt6h0bxKzQFDmZiK4ATFU6zRVp"
+    projectId: "<your-project-id>"
+    clusterId: "<your-cluster-id>"
+    clusterToken: "<your-cluster-token>"
 
 Discovery-Agent:
   replicaCount: 2
