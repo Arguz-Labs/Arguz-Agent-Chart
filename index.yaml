@@ -3,7 +3,7 @@ entries:
   Arguz-Agent:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-03-29T02:08:23.523514056Z"
+    created: "2026-03-29T02:11:55.144955503Z"
     description: A Helm chart for Kubernetes
     digest: 943ce37b75ec61cec2aa2298ee3e34faf669ecb90b983e755dae0ca9511605c9
     name: Arguz-Agent
@@ -14,7 +14,21 @@ entries:
   arguz-agent:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-03-29T02:08:23.524403129Z"
+    created: "2026-03-29T02:11:55.146308854Z"
+    dependencies:
+    - name: Discovery-Agent
+      repository: file://charts/Discovery-Agent
+      version: 0.1.0
+    description: A Helm chart for Kubernetes
+    digest: 0d50be83ee9a22bf15d7f6026f78ce597e7a6a56984b6af6ba990a87fa0d8f3d
+    name: arguz-agent
+    type: application
+    urls:
+    - https://Arguz-Labs.github.io/Arguz-Agent-Chart/arguz-agent-0.1.3.tgz
+    version: 0.1.3
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2026-03-29T02:11:55.145886307Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -28,7 +42,7 @@ entries:
     version: 0.1.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-03-29T02:08:23.523992746Z"
+    created: "2026-03-29T02:11:55.145392177Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -40,4 +54,4 @@ entries:
     urls:
     - https://Arguz-Labs.github.io/Arguz-Agent-Chart/arguz-agent-0.1.0.tgz
     version: 0.1.0
-generated: "2026-03-29T02:08:23.522999308Z"
+generated: "2026-03-29T02:11:55.144361286Z"
