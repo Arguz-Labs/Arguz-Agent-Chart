@@ -8,13 +8,13 @@ The **Arguz Agent** is responsible for collecting and structuring runtime data f
 
 ### Install from Helm repo (GitHub Pages)
 
-Chart version: 0.1.0
+Chart version: 0.2.0
 
 ```bash
 helm repo add arguz-agent https://Arguz-Labs.github.io/Arguz-Agent-Chart
 helm repo update
 helm upgrade --install arguz-agent arguz-agent/arguz-agent \
-  --version 0.1.0 \
+  --version 0.2.0 \
   -n arguz-agent \
   --create-namespace
 ```
