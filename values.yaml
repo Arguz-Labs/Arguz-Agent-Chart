@@ -12,7 +12,7 @@ Discovery-Agent:
   image:
     repository: ghcr.io/arguz-labs/arguz-discovery-agent
     pullPolicy: IfNotPresent
-    tag: "20260328001407"
+    tag: "20260329231119"
 
   imagePullSecrets: []
   nameOverride: ""
