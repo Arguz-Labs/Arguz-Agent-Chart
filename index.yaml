@@ -3,7 +3,7 @@ entries:
   Arguz-Agent:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-03-30T17:49:29.337209455Z"
+    created: "2026-05-18T02:15:40.965727879Z"
     description: A Helm chart for Kubernetes
     digest: 943ce37b75ec61cec2aa2298ee3e34faf669ecb90b983e755dae0ca9511605c9
     name: Arguz-Agent
@@ -14,7 +14,21 @@ entries:
   arguz-agent:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-03-30T17:49:29.339059502Z"
+    created: "2026-05-18T02:15:40.96744088Z"
+    dependencies:
+    - name: Discovery-Agent
+      repository: file://charts/Discovery-Agent
+      version: 0.1.0
+    description: A Helm chart for Kubernetes
+    digest: 322067364b6fa815987040526e2f81b1518977806b043a7649a1e3ea430a1f54
+    name: arguz-agent
+    type: application
+    urls:
+    - https://Arguz-Labs.github.io/Arguz-Agent-Chart/arguz-agent-0.3.0.tgz
+    version: 0.3.0
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2026-05-18T02:15:40.967122943Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -28,7 +42,7 @@ entries:
     version: 0.2.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-03-30T17:49:29.338617053Z"
+    created: "2026-05-18T02:15:40.96679494Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -42,7 +56,7 @@ entries:
     version: 0.1.3
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-03-30T17:49:29.338206853Z"
+    created: "2026-05-18T02:15:40.966438656Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -56,7 +70,7 @@ entries:
     version: 0.1.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-03-30T17:49:29.337740808Z"
+    created: "2026-05-18T02:15:40.966100368Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -68,4 +82,4 @@ entries:
     urls:
     - https://Arguz-Labs.github.io/Arguz-Agent-Chart/arguz-agent-0.1.0.tgz
     version: 0.1.0
-generated: "2026-03-30T17:49:29.336611801Z"
+generated: "2026-05-18T02:15:40.965236121Z"
