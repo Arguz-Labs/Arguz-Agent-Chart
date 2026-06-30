@@ -1,0 +1,6 @@
+apiVersion: v2
+name: Scaling-Rules-Agent
+description: Helm subchart for the Arguz scaling rules agent
+type: application
+version: 0.1.0
+appVersion: "latest"

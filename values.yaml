@@ -12,7 +12,7 @@ Discovery-Agent:
   image:
     repository: ghcr.io/arguz-labs/arguz-discovery-agent
     pullPolicy: IfNotPresent
-    tag: "20260622195205"
+    tag: "v1.0.1"
 
   imagePullSecrets: []
   nameOverride: ""
@@ -80,6 +80,51 @@ Discovery-Agent:
   # - name: foo
   #   mountPath: "/etc/foo"
   #   readOnly: true
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+Scaling-Rules-Agent:
+  enabled: true
+  replicaCount: 1
+
+  image:
+    repository: ghcr.io/arguz-labs/arguz-scaling-rules-agent
+    pullPolicy: IfNotPresent
+    tag: "v1.0.1"
+
+  imagePullSecrets: []
+  nameOverride: ""
+  fullnameOverride: ""
+
+  serviceAccount:
+    create: true
+    automount: true
+    annotations: {}
+    name: ""
+
+  podAnnotations: {}
+  podLabels: {}
+
+  podSecurityContext: {}
+
+  securityContext: {}
+
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+  env:
+    API_URL: "https://api-scaling-rules.arguz.io"
+    LOG_LEVEL: "info"
+    IGNORE_RESOURCES: ""
 
   nodeSelector: {}
 

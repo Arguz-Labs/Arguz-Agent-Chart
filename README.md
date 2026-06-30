@@ -1,6 +1,9 @@
 # arguz-agent Helm Chart
 
-The **Arguz Agent** is responsible for collecting and structuring runtime data from your cluster, enabling deep visibility into service behavior and interactions. It runs inside your environment and automatically gathers insights about how services communicate, helping you understand dependencies, detect issues, and analyze real system behavior without requiring manual instrumentation.
+The **Arguz Agent** chart deploys the in-cluster agents used by Arguz to collect runtime data and execute operational automations. Today it bundles:
+
+- `Discovery-Agent` for cluster inventory, topology and runtime visibility
+- `Scaling-Rules-Agent` for applying and reverting Arguz scaling templates through HPAs
 
 ---
 
@@ -8,13 +11,13 @@ The **Arguz Agent** is responsible for collecting and structuring runtime data f
 
 ### Install from Helm repo (GitHub Pages)
 
-Chart version: 0.3.0
+Chart version: 1.0.1
 
 ```bash
 helm repo add arguz-agent https://Arguz-Labs.github.io/Arguz-Agent-Chart
 helm repo update
 helm upgrade --install arguz-agent arguz-agent/arguz-agent \
-  --version 0.3.0 \
+  --version 1.0.1 \
   -n arguz-agent \
   --create-namespace
 ```
@@ -45,8 +48,30 @@ helm upgrade --install arguz-agent . \
   --set-string global.clusterCredentials.clusterToken=<CLUSTER_TOKEN>
 ```
 
+### Optional: Disable the scaling rules agent
+
+```bash
+helm upgrade --install arguz-agent . \
+  -n arguz-agent \
+  --create-namespace \
+  --set Scaling-Rules-Agent.enabled=false
+```
+
+### Scaling rules agent settings
+
+The scaling rules agent reuses the same cluster credentials secret and additionally needs the Scaling Rules API URL. Default values:
+
+```yaml
+Scaling-Rules-Agent:
+  enabled: true
+  env:
+    API_URL: https://api-scaling-rules.arguz.io
+    LOG_LEVEL: info
+    IGNORE_RESOURCES: ""
+```
+
 ## Notes
 
-- A Kubernetes secret (`credentialsSecretName`) will be used to store the provided credentials securely.
-- Ensure your cluster has the required permissions for the agent to run properly.
+- A Kubernetes secret (`credentialsSecretName`) is shared by both agents to store `PROJECT_ID`, `CLUSTER_ID` and `CLUSTER_TOKEN`.
+- Ensure your cluster has the required RBAC permissions for both agents to run properly.
 - It is recommended to manage credentials using environment variables or secret management systems instead of hardcoding them.
