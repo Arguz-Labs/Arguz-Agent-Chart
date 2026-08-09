@@ -3,7 +3,7 @@ enabled: true
 image:
   repository: ghcr.io/arguz-labs/arguz-node-agent
   pullPolicy: IfNotPresent
-  tag: "v1.2.0"
+  tag: "v1.2.1"
   digest: ""
 imagePullSecrets: []
 
@@ -25,7 +25,7 @@ daemonset:
   scheduleControlPlane: false
 
 priorityClass:
-  create: false
+  create: true
   name: ""
   value: 1000000
   description: Arguz Node Agent

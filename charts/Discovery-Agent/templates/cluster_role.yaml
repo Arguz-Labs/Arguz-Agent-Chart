@@ -103,6 +103,7 @@ roleRef:
 {{- if $selfUpgradeEnabled }}
 {{- $scalingRulesName := printf "%s-scaling-rules-agent" (.Release.Name | lower) | trunc 63 | trimSuffix "-" }}
 {{- $nodeAgentName := printf "%s-node-agent" (.Release.Name | lower) | trunc 63 | trimSuffix "-" }}
+{{- $nodeAgentPriorityClassName := printf "%s-priority" $nodeAgentName | trunc 63 | trimSuffix "-" }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -191,6 +192,11 @@ rules:
     verbs: ["get", "update", "patch"]
     resourceNames:
       - {{ include "Discovery-Agent.fullname" . }}-self-upgrade
+  - apiGroups: ["scheduling.k8s.io"]
+    resources: ["priorityclasses"]
+    verbs: ["get", "update", "patch"]
+    resourceNames:
+      - {{ $nodeAgentPriorityClassName }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
