@@ -3,7 +3,7 @@ entries:
   Arguz-Agent:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T15:33:30.75267196Z"
+    created: "2026-08-09T15:42:21.918542502Z"
     description: A Helm chart for Kubernetes
     digest: 943ce37b75ec61cec2aa2298ee3e34faf669ecb90b983e755dae0ca9511605c9
     name: Arguz-Agent
@@ -14,7 +14,25 @@ entries:
   arguz-agent:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T15:33:30.758271843Z"
+    created: "2026-08-09T15:42:21.924193561Z"
+    dependencies:
+    - name: Discovery-Agent
+      repository: file://charts/Discovery-Agent
+      version: 1.1.2
+    - condition: Scaling-Rules-Agent.enabled
+      name: Scaling-Rules-Agent
+      repository: file://charts/Scaling-Rules-Agent
+      version: 1.1.2
+    description: A Helm chart for Kubernetes
+    digest: 6799869c02a7eb8b932a54291e5eeb0e464a6731a7a536d919c54c0ea4e83224
+    name: arguz-agent
+    type: application
+    urls:
+    - https://Arguz-Labs.github.io/Arguz-Agent-Chart/arguz-agent-1.1.2.tgz
+    version: 1.1.2
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2026-08-09T15:42:21.923452265Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -32,7 +50,7 @@ entries:
     version: 1.1.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T15:33:30.757125166Z"
+    created: "2026-08-09T15:42:21.922759629Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -50,7 +68,7 @@ entries:
     version: 1.1.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T15:33:30.756407172Z"
+    created: "2026-08-09T15:42:21.922042378Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -68,7 +86,7 @@ entries:
     version: 1.0.2
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T15:33:30.755643583Z"
+    created: "2026-08-09T15:42:21.921320788Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -86,7 +104,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T15:33:30.755088664Z"
+    created: "2026-08-09T15:42:21.920755411Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -100,7 +118,7 @@ entries:
     version: 0.3.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T15:33:30.754590732Z"
+    created: "2026-08-09T15:42:21.920314306Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -114,7 +132,7 @@ entries:
     version: 0.2.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T15:33:30.754121804Z"
+    created: "2026-08-09T15:42:21.919907135Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -128,7 +146,7 @@ entries:
     version: 0.1.3
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T15:33:30.753630925Z"
+    created: "2026-08-09T15:42:21.919452765Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -142,7 +160,7 @@ entries:
     version: 0.1.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T15:33:30.753182927Z"
+    created: "2026-08-09T15:42:21.919008484Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -154,4 +172,4 @@ entries:
     urls:
     - https://Arguz-Labs.github.io/Arguz-Agent-Chart/arguz-agent-0.1.0.tgz
     version: 0.1.0
-generated: "2026-08-09T15:33:30.752098186Z"
+generated: "2026-08-09T15:42:21.917955925Z"
