@@ -70,6 +70,46 @@ Scaling-Rules-Agent:
     IGNORE_RESOURCES: ""
 ```
 
+### Discovery agent self-upgrade
+
+`Discovery-Agent` can use the Helm SDK to poll and upgrade its own release. It
+is disabled by default, so existing installations retain their current RBAC and
+behavior. Enabling it creates release-scoped Role/RoleBinding resources and the
+minimum ClusterRole/ClusterRoleBinding rules required to update the Discovery
+agent's existing cluster RBAC. Enable it explicitly in the Helm values for each
+installation/cluster; assigning a catalog entry alone cannot enable self-upgrade.
+
+```yaml
+Discovery-Agent:
+  selfUpgrade:
+    enabled: true
+    pollInterval: 5m
+    chartRef: oci://ghcr.io/arguz-labs/arguz-agent
+    timeout: 5m
+    lock:
+      # Empty values derive a stable name and use the release namespace.
+      name: ""
+      namespace: ""
+```
+
+The agent receives the chart reference, release identity, timing, and lock
+settings through environment variables and its mounted `self-upgrade.yaml`
+configuration file. `chartRef` is a normal Helm OCI/chart reference; the chart
+does not impose a static registry repository allowlist.
+
+### Discovery agent image and health settings
+
+Images use `repository:tag` by default. To pin an image by digest, set
+`Discovery-Agent.image.digest`; it renders as `repository@digest` and takes
+precedence over `tag`.
+
+The distroless Discovery Agent serves `/healthz` on its named `health` port
+(`8080`). Default readiness and liveness probes use that endpoint. The listener
+defaults to `HEALTH_ADDR=0.0.0.0:8080` and can be changed with
+`Discovery-Agent.env.HEALTH_ADDR`; when changing it, keep the health endpoint
+reachable on the container's named port. The probes, `podSecurityContext`, and
+`securityContext` can be overridden through `Discovery-Agent` values.
+
 ## Notes
 
 - A Kubernetes secret (`credentialsSecretName`) is shared by both agents to store `PROJECT_ID`, `CLUSTER_ID` and `CLUSTER_TOKEN`.

@@ -37,10 +37,18 @@ Common labels
 {{- define "Discovery-Agent.labels" -}}
 helm.sh/chart: {{ include "Discovery-Agent.chart" . }}
 {{ include "Discovery-Agent.selectorLabels" . }}
+app.kubernetes.io/component: discovery-agent
+arguz.io/upgradeable: "true"
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/* Metadata used by the agent to identify only resources from its Helm release. */}}
+{{- define "Discovery-Agent.annotations" -}}
+arguz.io/helm-release: {{ .Release.Name | quote }}
+arguz.io/helm-release-namespace: {{ .Release.Namespace | quote }}
 {{- end }}
 
 {{/*

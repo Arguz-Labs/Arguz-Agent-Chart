@@ -2,6 +2,10 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: {{ include "Discovery-Agent.fullname" . }}
+  labels:
+    {{- include "Discovery-Agent.labels" . | nindent 4 }}
+  annotations:
+    {{- include "Discovery-Agent.annotations" . | nindent 4 }}
 rules:
   - apiGroups: [""]
     resources:
@@ -79,6 +83,10 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: {{ include "Discovery-Agent.fullname" . }}
+  labels:
+    {{- include "Discovery-Agent.labels" . | nindent 4 }}
+  annotations:
+    {{- include "Discovery-Agent.annotations" . | nindent 4 }}
 subjects:
   - kind: ServiceAccount
     name: {{ include "Discovery-Agent.serviceAccountName" . }}
@@ -87,3 +95,96 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: {{ include "Discovery-Agent.fullname" . }}
+{{- if (default false (.Values.selfUpgrade | default dict).enabled) }}
+{{- $scalingRulesName := printf "%s-scaling-rules-agent" (.Release.Name | lower) | trunc 63 | trimSuffix "-" }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "Discovery-Agent.fullname" . }}-self-upgrade
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "Discovery-Agent.labels" . | nindent 4 }}
+  annotations:
+    {{- include "Discovery-Agent.annotations" . | nindent 4 }}
+rules:
+  # Helm release history is identified by Helm labels and validated by the agent.
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["configmaps", "serviceaccounts"]
+    verbs: ["get", "create", "update", "patch", "delete"]
+    resourceNames:
+      - {{ default (printf "%s-config" (include "Discovery-Agent.fullname" .)) ((.Values.config | default dict).configMapName) }}
+      - {{ include "Discovery-Agent.serviceAccountName" . }}
+      - {{ $scalingRulesName }}
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "create", "update", "patch", "delete"]
+    resourceNames:
+      - {{ include "Discovery-Agent.fullname" . }}
+      - {{ $scalingRulesName }}
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "create", "update", "patch", "delete"]
+    resourceNames:
+      - {{ default (printf "%s-self-upgrade" (include "Discovery-Agent.fullname" .)) (((.Values.selfUpgrade | default dict).lock | default dict).name) }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "Discovery-Agent.fullname" . }}-self-upgrade
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "Discovery-Agent.labels" . | nindent 4 }}
+  annotations:
+    {{- include "Discovery-Agent.annotations" . | nindent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "Discovery-Agent.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "Discovery-Agent.fullname" . }}-self-upgrade
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "Discovery-Agent.fullname" . }}-self-upgrade
+  labels:
+    {{- include "Discovery-Agent.labels" . | nindent 4 }}
+  annotations:
+    {{- include "Discovery-Agent.annotations" . | nindent 4 }}
+rules:
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["clusterroles"]
+    verbs: ["get", "update", "patch"]
+    resourceNames:
+      - {{ include "Discovery-Agent.fullname" . }}
+      - {{ $scalingRulesName }}
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["clusterrolebindings"]
+    verbs: ["get", "update", "patch"]
+    resourceNames:
+      - {{ include "Discovery-Agent.fullname" . }}
+      - {{ $scalingRulesName }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "Discovery-Agent.fullname" . }}-self-upgrade
+  labels:
+    {{- include "Discovery-Agent.labels" . | nindent 4 }}
+  annotations:
+    {{- include "Discovery-Agent.annotations" . | nindent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "Discovery-Agent.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "Discovery-Agent.fullname" . }}-self-upgrade
+{{- end }}

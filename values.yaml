@@ -13,6 +13,7 @@ Discovery-Agent:
     repository: ghcr.io/arguz-labs/arguz-discovery-agent
     pullPolicy: IfNotPresent
     tag: "v1.0.1"
+    # digest: "sha256:..." # When set, renders repository@digest and takes precedence over tag.
 
   imagePullSecrets: []
   nameOverride: ""
@@ -27,16 +28,15 @@ Discovery-Agent:
   podAnnotations: {}
   podLabels: {}
 
-  podSecurityContext: {}
-    # fsGroup: 2000
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
 
-  securityContext: {}
-    # capabilities:
-    #   drop:
-    #   - ALL
-    # readOnlyRootFilesystem: true
-    # runAsNonRoot: true
-    # runAsUser: 1000
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
 
   resources:
     limits:
@@ -48,6 +48,20 @@ Discovery-Agent:
 
   env:
     API_URL: "https://api-discover.arguz.io"
+    HEALTH_ADDR: "0.0.0.0:8080"
+
+  # Lets Discovery-Agent upgrade this Helm release through the Helm SDK. It must
+  # be explicitly enabled for each Helm installation/cluster; catalog assignment
+  # alone cannot enable it. The chart reference is intentionally fixed by
+  # default; no registry allowlist is applied.
+  selfUpgrade:
+    enabled: false
+    pollInterval: "5m"
+    chartRef: "oci://ghcr.io/arguz-labs/arguz-agent"
+    timeout: "5m"
+    lock:
+      name: ""
+      namespace: ""
 
   config:
     configMapName: ""
@@ -67,6 +81,24 @@ Discovery-Agent:
     maxReplicas: 100
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
+
+  # The distroless agent serves health checks at /healthz on the named health port.
+  livenessProbe:
+    httpGet:
+      path: /healthz
+      port: health
+    initialDelaySeconds: 10
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /healthz
+      port: health
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
 
   # Additional volumes on the output Deployment definition.
   volumes: []
