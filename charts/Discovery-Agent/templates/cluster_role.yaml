@@ -169,12 +169,19 @@ rules:
     resourceNames:
       - {{ include "Discovery-Agent.fullname" . }}
       - {{ $scalingRulesName }}
+      - {{ include "Discovery-Agent.fullname" . }}-self-upgrade
   - apiGroups: ["rbac.authorization.k8s.io"]
     resources: ["clusterrolebindings"]
     verbs: ["get", "update", "patch"]
     resourceNames:
       - {{ include "Discovery-Agent.fullname" . }}
       - {{ $scalingRulesName }}
+      - {{ include "Discovery-Agent.fullname" . }}-self-upgrade
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["roles", "rolebindings"]
+    verbs: ["get", "update", "patch"]
+    resourceNames:
+      - {{ include "Discovery-Agent.fullname" . }}-self-upgrade
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
