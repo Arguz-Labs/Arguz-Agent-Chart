@@ -73,16 +73,16 @@ Scaling-Rules-Agent:
 ### Discovery agent self-upgrade
 
 `Discovery-Agent` can use the Helm SDK to poll and upgrade its own release. It
-is disabled by default, so existing installations retain their current RBAC and
-behavior. Enabling it creates release-scoped Role/RoleBinding resources and the
-minimum ClusterRole/ClusterRoleBinding rules required to update the Discovery
-agent's existing cluster RBAC. Enable it explicitly in the Helm values for each
-installation/cluster; assigning a catalog entry alone cannot enable self-upgrade.
+is enabled by default for new installations. It creates release-scoped
+Role/RoleBinding resources and the minimum ClusterRole/ClusterRoleBinding rules
+required to update the Discovery agent's existing cluster RBAC. A catalog
+assignment supplies the desired release, while a local `enabled: false` remains
+an explicit opt-out for that installation/cluster.
 
 ```yaml
 Discovery-Agent:
   selfUpgrade:
-    enabled: true
+    enabled: false # Explicitly opt out of automatic desired-release installs.
     pollInterval: 5m
     chartRef: oci://ghcr.io/arguz-labs/arguz-agent
     timeout: 5m
@@ -107,6 +107,38 @@ and `maxUnavailable: 0`. The old leader is kept alive for the configurable
 which does not require a shell in the distroless image. The default
 `terminationGracePeriodSeconds` is 120 seconds; keep it longer than the
 pre-stop delay to allow a ready replacement pod to assume leadership first.
+
+Existing releases that persist `selfUpgrade.enabled: false` do not change
+silently. Bootstrap them once with a self-upgrade-capable chart version and an
+explicit value:
+
+```bash
+helm upgrade arguz-agent oci://ghcr.io/arguz-labs/arguz-agent \
+  --namespace arguz-agent \
+  --reuse-values \
+  --set Discovery-Agent.selfUpgrade.enabled=true
+```
+
+Before enabling self-upgrade, verify the Discovery Agent ServiceAccount can
+operate on the release resources it already owns. Replace the namespace or
+release name when customized:
+
+```bash
+SA=system:serviceaccount:arguz-agent:arguz-agent-discovery-agent
+
+kubectl auth can-i get secrets --as="$SA" -n arguz-agent
+kubectl auth can-i create secrets --as="$SA" -n arguz-agent
+kubectl auth can-i patch deployment/arguz-agent-discovery-agent --as="$SA" -n arguz-agent
+kubectl auth can-i patch deployment/arguz-agent-scaling-rules-agent --as="$SA" -n arguz-agent
+kubectl auth can-i create leases/arguz-agent-discovery-agent-self-upgrade --as="$SA" -n arguz-agent
+kubectl auth can-i patch clusterrole/arguz-agent-discovery-agent --as="$SA"
+kubectl auth can-i patch clusterrolebinding/arguz-agent-discovery-agent --as="$SA"
+```
+
+The chart intentionally does not grant unrestricted creation or deletion of
+cluster-scoped RBAC resources. A future chart that introduces new cluster-scoped
+resources requires an administrator bootstrap upgrade instead of allowing the
+Agent to escalate its own privileges.
 
 ### Discovery agent image and health settings
 

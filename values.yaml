@@ -12,7 +12,7 @@ Discovery-Agent:
   image:
     repository: ghcr.io/arguz-labs/arguz-discovery-agent
     pullPolicy: IfNotPresent
-    tag: "v1.1.0"
+    tag: "v1.1.1"
     # digest: "sha256:..." # When set, renders repository@digest and takes precedence over tag.
 
   imagePullSecrets: []
@@ -50,12 +50,11 @@ Discovery-Agent:
     API_URL: "https://api-discover.arguz.io"
     HEALTH_ADDR: "0.0.0.0:8080"
 
-  # Lets Discovery-Agent upgrade this Helm release through the Helm SDK. It must
-  # be explicitly enabled for each Helm installation/cluster; catalog assignment
-  # alone cannot enable it. The chart reference is intentionally fixed by
-  # default; no registry allowlist is applied.
+  # Discovery-Agent upgrades this Helm release through the Helm SDK by default.
+  # Set enabled: false to opt out for a specific installation/cluster. Catalog
+  # assignment supplies the desired release; it cannot bypass a local opt-out.
   selfUpgrade:
-    enabled: false
+    enabled: true
     pollInterval: "5m"
     chartRef: "oci://ghcr.io/arguz-labs/arguz-agent"
     timeout: "5m"
@@ -131,7 +130,7 @@ Scaling-Rules-Agent:
   image:
     repository: ghcr.io/arguz-labs/arguz-scaling-rules-agent
     pullPolicy: IfNotPresent
-    tag: "v1.1.0"
+    tag: "v1.1.1"
 
   imagePullSecrets: []
   nameOverride: ""

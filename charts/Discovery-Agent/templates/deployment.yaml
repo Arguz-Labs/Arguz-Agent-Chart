@@ -16,6 +16,10 @@ kind: Deployment
 {{- $configFileName := default "config.yaml" $config.fileName }}
 {{- $configFilePath := default "/config.yaml" $config.filePath }}
 {{- $selfUpgrade := .Values.selfUpgrade | default dict }}
+{{- $selfUpgradeEnabled := true }}
+{{- if hasKey $selfUpgrade "enabled" }}
+{{- $selfUpgradeEnabled = $selfUpgrade.enabled }}
+{{- end }}
 {{- $selfUpgradeLock := $selfUpgrade.lock | default dict }}
 {{- $selfUpgradeRollout := $selfUpgrade.rollout | default dict }}
 {{- $selfUpgradeLockName := default (printf "%s-self-upgrade" (include "Discovery-Agent.fullname" .)) $selfUpgradeLock.name }}
@@ -29,7 +33,7 @@ spec:
   {{- if not (default false $autoscaling.enabled) }}
   replicas: {{ default 1 .Values.replicaCount }}
   {{- end }}
-  {{- if (default false $selfUpgrade.enabled) }}
+  {{- if $selfUpgradeEnabled }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -55,7 +59,7 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- if (default false $selfUpgrade.enabled) }}
+      {{- if $selfUpgradeEnabled }}
       terminationGracePeriodSeconds: {{ default 120 $selfUpgradeRollout.terminationGracePeriodSeconds }}
       {{- end }}
       {{- with .Values.imagePullSecrets }}
@@ -71,7 +75,7 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: {{- if $imageDigest }} "{{ $imageRepository }}@{{ $imageDigest }}" {{- else }} "{{ $imageRepository }}:{{ $imageTag }}" {{- end }}
           imagePullPolicy: {{ $imagePullPolicy }}
-          {{- if (default false $selfUpgrade.enabled) }}
+          {{- if $selfUpgradeEnabled }}
           lifecycle:
             preStop:
               sleep:
@@ -109,7 +113,7 @@ spec:
             - name: HEALTH_ADDR
               value: {{ default "0.0.0.0:8080" $env.HEALTH_ADDR | quote }}
             - name: SELF_UPGRADE_ENABLED
-              value: {{ default false $selfUpgrade.enabled | quote }}
+              value: {{ $selfUpgradeEnabled | quote }}
             - name: SELF_UPGRADE_POLL_INTERVAL
               value: {{ default "5m" $selfUpgrade.pollInterval | quote }}
             - name: SELF_UPGRADE_CHART_REF

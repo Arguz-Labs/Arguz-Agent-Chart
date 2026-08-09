@@ -95,7 +95,12 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: {{ include "Discovery-Agent.fullname" . }}
-{{- if (default false (.Values.selfUpgrade | default dict).enabled) }}
+{{- $selfUpgrade := .Values.selfUpgrade | default dict }}
+{{- $selfUpgradeEnabled := true }}
+{{- if hasKey $selfUpgrade "enabled" }}
+{{- $selfUpgradeEnabled = $selfUpgrade.enabled }}
+{{- end }}
+{{- if $selfUpgradeEnabled }}
 {{- $scalingRulesName := printf "%s-scaling-rules-agent" (.Release.Name | lower) | trunc 63 | trimSuffix "-" }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
