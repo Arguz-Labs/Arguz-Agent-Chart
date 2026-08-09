@@ -3,7 +3,7 @@ entries:
   Arguz-Agent:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T21:03:22.399711605Z"
+    created: "2026-08-09T21:31:33.581851977Z"
     description: A Helm chart for Kubernetes
     digest: 943ce37b75ec61cec2aa2298ee3e34faf669ecb90b983e755dae0ca9511605c9
     name: Arguz-Agent
@@ -13,8 +13,30 @@ entries:
     version: 0.1.0
   arguz-agent:
   - apiVersion: v2
+    appVersion: 1.2.1
+    created: "2026-08-09T21:31:33.596422987Z"
+    dependencies:
+    - name: Discovery-Agent
+      repository: file://charts/Discovery-Agent
+      version: 1.2.1
+    - condition: Scaling-Rules-Agent.enabled
+      name: Scaling-Rules-Agent
+      repository: file://charts/Scaling-Rules-Agent
+      version: 1.2.1
+    - condition: Arguz-Node-Agent.enabled
+      name: Arguz-Node-Agent
+      repository: file://charts/Arguz-Node-Agent
+      version: 1.2.1
+    description: A Helm chart for Kubernetes
+    digest: 705d2c4f27c4c878f2573940cf3f56f80c3797591b5c8dab4c8f1c041b594469
+    name: arguz-agent
+    type: application
+    urls:
+    - https://Arguz-Labs.github.io/Arguz-Agent-Chart/arguz-agent-1.2.1.tgz
+    version: 1.2.1
+  - apiVersion: v2
     appVersion: 1.2.0
-    created: "2026-08-09T21:03:22.413055938Z"
+    created: "2026-08-09T21:31:33.594183153Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -36,7 +58,7 @@ entries:
     version: 1.2.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T21:03:22.411833661Z"
+    created: "2026-08-09T21:31:33.5929851Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -54,7 +76,7 @@ entries:
     version: 1.1.8
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T21:03:22.410077835Z"
+    created: "2026-08-09T21:31:33.592277249Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -72,7 +94,7 @@ entries:
     version: 1.1.7
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T21:03:22.409312072Z"
+    created: "2026-08-09T21:31:33.591513442Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -90,7 +112,7 @@ entries:
     version: 1.1.6
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T21:03:22.408602403Z"
+    created: "2026-08-09T21:31:33.59082652Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -108,7 +130,7 @@ entries:
     version: 1.1.5
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T21:03:22.407873279Z"
+    created: "2026-08-09T21:31:33.59011358Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -126,7 +148,7 @@ entries:
     version: 1.1.4
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T21:03:22.407141319Z"
+    created: "2026-08-09T21:31:33.589375372Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -144,7 +166,7 @@ entries:
     version: 1.1.3
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T21:03:22.406400853Z"
+    created: "2026-08-09T21:31:33.588548697Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -162,7 +184,7 @@ entries:
     version: 1.1.2
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T21:03:22.405675646Z"
+    created: "2026-08-09T21:31:33.587768099Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -180,7 +202,7 @@ entries:
     version: 1.1.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T21:03:22.404845953Z"
+    created: "2026-08-09T21:31:33.586141824Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -198,7 +220,7 @@ entries:
     version: 1.1.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T21:03:22.404079248Z"
+    created: "2026-08-09T21:31:33.585376745Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -216,7 +238,7 @@ entries:
     version: 1.0.2
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T21:03:22.402610681Z"
+    created: "2026-08-09T21:31:33.584695123Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -234,7 +256,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T21:03:22.402025426Z"
+    created: "2026-08-09T21:31:33.584106687Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -248,7 +270,7 @@ entries:
     version: 0.3.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T21:03:22.401604619Z"
+    created: "2026-08-09T21:31:33.583685134Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -262,7 +284,7 @@ entries:
     version: 0.2.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T21:03:22.401160127Z"
+    created: "2026-08-09T21:31:33.583234907Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -276,7 +298,7 @@ entries:
     version: 0.1.3
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T21:03:22.400646045Z"
+    created: "2026-08-09T21:31:33.582808325Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -290,7 +312,7 @@ entries:
     version: 0.1.1
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2026-08-09T21:03:22.400175023Z"
+    created: "2026-08-09T21:31:33.582330887Z"
     dependencies:
     - name: Discovery-Agent
       repository: file://charts/Discovery-Agent
@@ -302,4 +324,4 @@ entries:
     urls:
     - https://Arguz-Labs.github.io/Arguz-Agent-Chart/arguz-agent-0.1.0.tgz
     version: 0.1.0
-generated: "2026-08-09T21:03:22.399116482Z"
+generated: "2026-08-09T21:31:33.58124209Z"
