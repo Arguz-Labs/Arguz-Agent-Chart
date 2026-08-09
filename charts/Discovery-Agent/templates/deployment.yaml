@@ -17,6 +17,7 @@ kind: Deployment
 {{- $configFilePath := default "/config.yaml" $config.filePath }}
 {{- $selfUpgrade := .Values.selfUpgrade | default dict }}
 {{- $selfUpgradeLock := $selfUpgrade.lock | default dict }}
+{{- $selfUpgradeRollout := $selfUpgrade.rollout | default dict }}
 {{- $selfUpgradeLockName := default (printf "%s-self-upgrade" (include "Discovery-Agent.fullname" .)) $selfUpgradeLock.name }}
 metadata:
   name: {{ include "Discovery-Agent.fullname" . }}
@@ -27,6 +28,13 @@ metadata:
 spec:
   {{- if not (default false $autoscaling.enabled) }}
   replicas: {{ default 1 .Values.replicaCount }}
+  {{- end }}
+  {{- if (default false $selfUpgrade.enabled) }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   {{- end }}
   selector:
     matchLabels:
@@ -47,6 +55,9 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
+      {{- if (default false $selfUpgrade.enabled) }}
+      terminationGracePeriodSeconds: {{ default 120 $selfUpgradeRollout.terminationGracePeriodSeconds }}
+      {{- end }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -60,6 +71,12 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: {{- if $imageDigest }} "{{ $imageRepository }}@{{ $imageDigest }}" {{- else }} "{{ $imageRepository }}:{{ $imageTag }}" {{- end }}
           imagePullPolicy: {{ $imagePullPolicy }}
+          {{- if (default false $selfUpgrade.enabled) }}
+          lifecycle:
+            preStop:
+              sleep:
+                seconds: {{ default 30 $selfUpgradeRollout.preStopDelaySeconds }}
+          {{- end }}
           ports:
             - name: health
               containerPort: 8080

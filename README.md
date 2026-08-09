@@ -90,12 +90,23 @@ Discovery-Agent:
       # Empty values derive a stable name and use the release namespace.
       name: ""
       namespace: ""
+    # Applied only while self-upgrade is enabled.
+    rollout:
+      terminationGracePeriodSeconds: 120
+      preStopDelaySeconds: 30
 ```
 
 The agent receives the chart reference, release identity, timing, and lock
 settings through environment variables and its mounted `self-upgrade.yaml`
 configuration file. `chartRef` is a normal Helm OCI/chart reference; the chart
 does not impose a static registry repository allowlist.
+
+When enabled, self-upgrades use a `RollingUpdate` strategy with `maxSurge: 1`
+and `maxUnavailable: 0`. The old leader is kept alive for the configurable
+`preStopDelaySeconds` through Kubernetes' native lifecycle `sleep` handler,
+which does not require a shell in the distroless image. The default
+`terminationGracePeriodSeconds` is 120 seconds; keep it longer than the
+pre-stop delay to allow a ready replacement pod to assume leadership first.
 
 ### Discovery agent image and health settings
 

@@ -12,7 +12,7 @@ Discovery-Agent:
   image:
     repository: ghcr.io/arguz-labs/arguz-discovery-agent
     pullPolicy: IfNotPresent
-    tag: "v1.0.1"
+    tag: "v1.0.2"
     # digest: "sha256:..." # When set, renders repository@digest and takes precedence over tag.
 
   imagePullSecrets: []
@@ -62,6 +62,11 @@ Discovery-Agent:
     lock:
       name: ""
       namespace: ""
+    # Applied only when self-upgrade is enabled. Keep the pre-stop delay below
+    # the grace period so the old leader can remain available during handoff.
+    rollout:
+      terminationGracePeriodSeconds: 120
+      preStopDelaySeconds: 30
 
   config:
     configMapName: ""
@@ -126,7 +131,7 @@ Scaling-Rules-Agent:
   image:
     repository: ghcr.io/arguz-labs/arguz-scaling-rules-agent
     pullPolicy: IfNotPresent
-    tag: "v1.0.1"
+    tag: "v1.0.2"
 
   imagePullSecrets: []
   nameOverride: ""
