@@ -3,7 +3,7 @@ enabled: true
 image:
   repository: ghcr.io/arguz-labs/arguz-node-agent
   pullPolicy: IfNotPresent
-  tag: "v1.2.1"
+  tag: "v1.2.2"
   digest: ""
 imagePullSecrets: []
 

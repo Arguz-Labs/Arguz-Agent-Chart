@@ -1,3 +1,5 @@
+{{- $nodeAgentName := printf "%s-node-agent" (.Release.Name | lower) | trunc 63 | trimSuffix "-" }}
+{{- $nodeAgentPriorityClassName := printf "%s-priority" $nodeAgentName | trunc 63 | trimSuffix "-" }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -14,6 +16,7 @@ rules:
       - pods
       - pods/log
       - services
+      - endpoints
       - configmaps
       - secrets
       - events
@@ -21,6 +24,26 @@ rules:
       - get
       - list
       - watch
+
+  - apiGroups: ["discovery.k8s.io"]
+    resources:
+      - endpointslices
+    verbs:
+      - get
+      - list
+      - watch
+
+  # These are the exact Node Agent permissions Discovery must already hold
+  # before Kubernetes lets it reconcile the Node Agent ClusterRole/Binding.
+  - apiGroups: ["scheduling.k8s.io"]
+    resources:
+      - priorityclasses
+    resourceNames:
+      - {{ $nodeAgentPriorityClassName }}
+    verbs:
+      - get
+      - update
+      - patch
 
   - apiGroups: ["apps"]
     resources:
@@ -102,8 +125,6 @@ roleRef:
 {{- end }}
 {{- if $selfUpgradeEnabled }}
 {{- $scalingRulesName := printf "%s-scaling-rules-agent" (.Release.Name | lower) | trunc 63 | trimSuffix "-" }}
-{{- $nodeAgentName := printf "%s-node-agent" (.Release.Name | lower) | trunc 63 | trimSuffix "-" }}
-{{- $nodeAgentPriorityClassName := printf "%s-priority" $nodeAgentName | trunc 63 | trimSuffix "-" }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role

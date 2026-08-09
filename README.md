@@ -105,6 +105,11 @@ The first installation or upgrade that introduces the Node Agent requires an
 administrator-run Helm upgrade. Discovery self-upgrade intentionally cannot
 create new cluster-scoped RBAC or DaemonSet resources. Later upgrades can
 reconcile the existing Node Agent resources through restricted name allowlists.
+That bootstrap also grants Discovery the same read permissions delegated to the
+Node Agent, which Kubernetes requires before it allows Discovery to update the
+Node Agent ClusterRole or ClusterRoleBinding. A custom PriorityClass name still
+requires an administrator bootstrap because the self-upgrade allowlist uses the
+default release-derived PriorityClass name.
 
 Container log uploading is not enabled by this chart. The agent still mounts
 `/var/log` read-only for workload attribution and metrics. eBPF collection can
