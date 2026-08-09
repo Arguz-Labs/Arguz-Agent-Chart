@@ -102,6 +102,7 @@ roleRef:
 {{- end }}
 {{- if $selfUpgradeEnabled }}
 {{- $scalingRulesName := printf "%s-scaling-rules-agent" (.Release.Name | lower) | trunc 63 | trimSuffix "-" }}
+{{- $nodeAgentName := printf "%s-node-agent" (.Release.Name | lower) | trunc 63 | trimSuffix "-" }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -124,12 +125,18 @@ rules:
       - {{ default (printf "%s-config" (include "Discovery-Agent.fullname" .)) ((.Values.config | default dict).configMapName) }}
       - {{ include "Discovery-Agent.serviceAccountName" . }}
       - {{ $scalingRulesName }}
+      - {{ $nodeAgentName }}
   - apiGroups: ["apps"]
     resources: ["deployments"]
     verbs: ["get", "create", "update", "patch", "delete"]
     resourceNames:
       - {{ include "Discovery-Agent.fullname" . }}
       - {{ $scalingRulesName }}
+  - apiGroups: ["apps"]
+    resources: ["daemonsets"]
+    verbs: ["get", "update", "patch", "delete"]
+    resourceNames:
+      - {{ $nodeAgentName }}
   - apiGroups: ["coordination.k8s.io"]
     resources: ["leases"]
     verbs: ["get", "create", "update", "patch", "delete"]
@@ -170,6 +177,7 @@ rules:
       - {{ include "Discovery-Agent.fullname" . }}
       - {{ $scalingRulesName }}
       - {{ include "Discovery-Agent.fullname" . }}-self-upgrade
+      - {{ $nodeAgentName }}
   - apiGroups: ["rbac.authorization.k8s.io"]
     resources: ["clusterrolebindings"]
     verbs: ["get", "update", "patch"]
@@ -177,6 +185,7 @@ rules:
       - {{ include "Discovery-Agent.fullname" . }}
       - {{ $scalingRulesName }}
       - {{ include "Discovery-Agent.fullname" . }}-self-upgrade
+      - {{ $nodeAgentName }}
   - apiGroups: ["rbac.authorization.k8s.io"]
     resources: ["roles", "rolebindings"]
     verbs: ["get", "update", "patch"]

@@ -4,6 +4,7 @@ The **Arguz Agent** chart deploys the in-cluster agents used by Arguz to collect
 
 - `Discovery-Agent` for cluster inventory, topology and runtime visibility
 - `Scaling-Rules-Agent` for applying and reverting Arguz scaling templates through HPAs
+- `Arguz-Node-Agent` for node-level eBPF telemetry
 
 ---
 
@@ -69,6 +70,46 @@ Scaling-Rules-Agent:
     LOG_LEVEL: info
     IGNORE_RESOURCES: ""
 ```
+
+### Arguz Node Agent
+
+`Arguz-Node-Agent` runs as a DaemonSet on Linux worker nodes and is enabled by
+default. It reuses `global.credentialsSecretName` and the existing `CLUSTER_ID`
+and `CLUSTER_TOKEN` keys to send events, traces, and metrics to Arguz Ingestion.
+It does not use Cloudflare credentials or extra authentication headers.
+
+The agent needs host PID and network namespaces, privileged eBPF access, and
+host filesystem mounts for procfs, cgroups, kubelet, container runtime, tracefs,
+and debugfs. Its init container may set the node-wide
+`kernel.perf_event_paranoid` sysctl to `-1` so kprobes and uprobes can attach.
+Install it only in a namespace and on nodes where this privileged access is
+approved.
+
+The default scheduler policy targets Linux workers and excludes control-plane
+and master nodes. To include those nodes explicitly:
+
+```yaml
+Arguz-Node-Agent:
+  daemonset:
+    scheduleControlPlane: true
+```
+
+To disable the Node Agent for an installation:
+
+```yaml
+Arguz-Node-Agent:
+  enabled: false
+```
+
+The first installation or upgrade that introduces the Node Agent requires an
+administrator-run Helm upgrade. Discovery self-upgrade intentionally cannot
+create new cluster-scoped RBAC or DaemonSet resources. Later upgrades can
+reconcile the existing Node Agent resources through restricted name allowlists.
+
+Container log uploading is not enabled by this chart. The agent still mounts
+`/var/log` read-only for workload attribution and metrics. eBPF collection can
+observe process metadata, network traffic, SQL/query data, URL paths, and stack
+context; assess the data-handling policy before enabling it in production.
 
 ### Discovery agent self-upgrade
 
