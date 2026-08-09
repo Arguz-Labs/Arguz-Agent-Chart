@@ -12,13 +12,13 @@ The **Arguz Agent** chart deploys the in-cluster agents used by Arguz to collect
 
 ### Install from Helm repo (GitHub Pages)
 
-Chart version: 1.2.1
+Chart version: 1.2.2
 
 ```bash
 helm repo add arguz-agent https://Arguz-Labs.github.io/Arguz-Agent-Chart
 helm repo update
 helm upgrade --install arguz-agent arguz-agent/arguz-agent \
-  --version 1.2.1 \
+  --version 1.2.2 \
   -n arguz-agent \
   --create-namespace
 ```
